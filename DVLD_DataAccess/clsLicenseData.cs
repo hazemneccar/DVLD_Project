@@ -330,7 +330,7 @@ namespace DVLD_DataAccess
         {
             DataTable dt = new DataTable();
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.connectionString);
-            string query = @"select * from MyLicenses_View where DriverID=@DriverID";
+            string query = @"select * from MyLicenses_View where DriverID=@DriverID order by LicenseID desc";
             SqlCommand command = new SqlCommand(query, connection);
             command.Parameters.AddWithValue("@DriverID", DriverID);
             try
@@ -362,6 +362,35 @@ namespace DVLD_DataAccess
 
             string query = @"UPDATE Licenses 
                      SET IsActive = 0
+                     WHERE LicenseID = @LicenseID";
+
+            SqlCommand command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@LicenseID", licenseID);
+            try
+            {
+                connection.Open();
+                rowsAffected = command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return (rowsAffected > 0);
+        }
+        public static bool ActivateLicense(int licenseID)
+        {
+            int rowsAffected = 0;
+
+            SqlConnection connection = new SqlConnection(clsDataAccessSettings.connectionString);
+
+            string query = @"UPDATE Licenses 
+                     SET IsActive = 1
                      WHERE LicenseID = @LicenseID";
 
             SqlCommand command = new SqlCommand(query, connection);

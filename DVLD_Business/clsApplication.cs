@@ -9,7 +9,6 @@ using static DVLD_Business.clsTestType;
 
 namespace DVLD_Business
 {
-    //hehe
     public class clsApplication
     {
         public enum enMode { enAddNew = 0, enUpdate = 1 }
@@ -57,7 +56,7 @@ namespace DVLD_Business
         {
             this.ApplicationID = applicationID;
             this.ApplicantPersonID = applicantPersonID;
-            this.ApplicantPersonInfo = clsPerson.GetPersonInfoByPersonID(applicationID);
+            this.ApplicantPersonInfo = clsPerson.Find(applicationID);
             this.ApplicationDate = applicationDate;
             this.ApplicationTypeID = (enApplicationTypes)applicationTypeID;
             this.ApplicationTypeInfo=clsApplicationType.Find((clsApplication.enApplicationTypes)applicationTypeID);
@@ -121,15 +120,23 @@ namespace DVLD_Business
         {
             return DVLD_DataAccess.clsApplicationData.IsApplicationExist(ApplicationID);
         }
-        public static bool DeleteApplication(int AppliacationID)
+        public static bool Delete(int AppliacationID)
         {
             return DVLD_DataAccess.clsApplicationData.DeleteApplication(AppliacationID);
         }
-        public bool CancelApplication(int ApplicationID)
+        public bool CancelApplication()
         {
-            return DVLD_DataAccess.clsApplicationData.UpdateStatus(ApplicationID,(short)enApplicationStatus.Cancelled);
+            return CancelApplication(this.ApplicationID);
         }
-        public bool CompleteApplication(int ApplicationID)
+        public static bool CancelApplication(int ApplicationID)
+        {
+            return DVLD_DataAccess.clsApplicationData.UpdateStatus(ApplicationID, (short)enApplicationStatus.Cancelled);
+        }
+        public bool CompleteApplication()
+        {
+            return CompleteApplication(this.ApplicationID);
+        }
+        public static bool CompleteApplication(int ApplicationID)
         {
             return DVLD_DataAccess.clsApplicationData.UpdateStatus(ApplicationID, (short)enApplicationStatus.Completed);
         }
@@ -149,21 +156,21 @@ namespace DVLD_Business
         {
             return DoesPersonHaveActiveApplication(this.ApplicantPersonID, ApplicationTypeID);
         }
-        public static int GetActiveApplicationIDForLicenseClass(int personID, enApplicationTypes ApplicationTypeID,int licenseClassID)
+        public static int GetActiveApplicationIDForLicenseClass(int personID, enApplicationTypes ApplicationTypeID, clsLicenseClass.enLicenseClasses licenseClassID)
         {
-            return DVLD_DataAccess.clsApplicationData.GetActiveApplicationIDForLicenseClass(personID,(int) ApplicationTypeID, licenseClassID);
+            return DVLD_DataAccess.clsApplicationData.GetActiveApplicationIDForLicenseClass(personID,(int) ApplicationTypeID,(int) licenseClassID);
         }
-        public int GetActiveApplicationIDForLicenseClass(enApplicationTypes ApplicationTypeID, int licenseClassID)
+        public int GetActiveApplicationIDForLicenseClass(enApplicationTypes ApplicationTypeID, clsLicenseClass.enLicenseClasses licenseClassID)
         {
-            return DVLD_DataAccess.clsApplicationData.GetActiveApplicationIDForLicenseClass(this.ApplicantPersonID, (int)ApplicationTypeID, licenseClassID);
+            return DVLD_DataAccess.clsApplicationData.GetActiveApplicationIDForLicenseClass(this.ApplicantPersonID, (int)ApplicationTypeID,(int) licenseClassID);
         }
-        public static bool DoesPersonHaveActiveApplicationForLicenseClass(int personID, enApplicationTypes ApplicationTypeID, int licenseClassID)
+        public static bool DoesPersonHaveActiveApplicationForLicenseClass(int personID, enApplicationTypes ApplicationTypeID, clsLicenseClass.enLicenseClasses licenseClassID)
         {
-            return DVLD_DataAccess.clsApplicationData.DoesPersonHaveActiveApplicationForLicenseClass(personID,(int) ApplicationTypeID, licenseClassID);
+            return DVLD_DataAccess.clsApplicationData.DoesPersonHaveActiveApplicationForLicenseClass(personID,(int) ApplicationTypeID,(int) licenseClassID);
         }
-        public bool DoesPersonHaveActiveApplicationForLicenseClass(enApplicationTypes ApplicationTypeID, int licenseClassID)
+        public bool DoesPersonHaveActiveApplicationForLicenseClass(enApplicationTypes ApplicationTypeID, clsLicenseClass.enLicenseClasses licenseClassID)
         {
-            return DVLD_DataAccess.clsApplicationData.DoesPersonHaveActiveApplicationForLicenseClass(this.ApplicantPersonID, (int)ApplicationTypeID, licenseClassID);
+            return DVLD_DataAccess.clsApplicationData.DoesPersonHaveActiveApplicationForLicenseClass(this.ApplicantPersonID, (int)ApplicationTypeID,(int) licenseClassID);
         }
         public static bool isAvailableIssueLicense(int LocalDrivingAppID)
         {

@@ -19,19 +19,19 @@ namespace DVLD_Business
         }
         public new enMode mode= enMode.enAddNew;
         public int LocalDrivingAppID {  get; set; }
-        public int LicenseClassID {  get; set; }
+        public clsLicenseClass.enLicenseClasses LicenseClassID {  get; set; }
         public string PersonFullName
         {
             get { return base.ApplicantPersonInfo.FullName; }
         }
-        private clslocalDrivingApp(int LocalDrivingAppID, int LicenseClassID, int applicationID, int applicantPersonID, DateTime applicationDate, int applicationTypeID,
+        private clslocalDrivingApp(int LocalDrivingAppID, clsLicenseClass.enLicenseClasses LicenseClassID, int applicationID, int applicantPersonID, DateTime applicationDate, int applicationTypeID,
             enApplicationStatus applicationStatus, DateTime lastStatusDate, float paidFees, int createdByUserID)
         {
             this.LocalDrivingAppID= LocalDrivingAppID;
             this.LicenseClassID = LicenseClassID;
             this.ApplicationID = applicationID;
             this.ApplicantPersonID = applicantPersonID;
-            this.ApplicantPersonInfo = clsPerson.GetPersonInfoByPersonID(applicantPersonID);
+            this.ApplicantPersonInfo = clsPerson.Find(applicantPersonID);
             this.ApplicationDate = applicationDate;
             this.ApplicationTypeID =(enApplicationTypes) applicationTypeID;
             this.ApplicationTypeInfo = clsApplicationType.Find((clsApplication.enApplicationTypes)applicationTypeID);
@@ -45,7 +45,7 @@ namespace DVLD_Business
         public clslocalDrivingApp()
         {
             this.LocalDrivingAppID = -1;
-            this.LicenseClassID = -1;
+            this.LicenseClassID = clsLicenseClass.enLicenseClasses.Class3OrdinaryDrivingLicense;
             this.ApplicationID = -1;
             this.ApplicantPersonID = -1;
             this.ApplicationDate = DateTime.Now;
@@ -67,7 +67,7 @@ namespace DVLD_Business
                 if (application!=null)
                 {
                     return new clslocalDrivingApp(localDrivingLicenseApplicationID, 
-                        licenseClassID, applicationID,application.ApplicantPersonID, application.ApplicationDate,
+                        (clsLicenseClass.enLicenseClasses)licenseClassID, applicationID,application.ApplicantPersonID, application.ApplicationDate,
                         (int)application.ApplicationTypeID,application.ApplicationStatus, 
                         application.LastStatusDate, application.PaidFees, application.CreatedByUserID);
                 }
@@ -87,7 +87,7 @@ namespace DVLD_Business
                 byte applicationStatus = 1; DateTime lastStatusDate = DateTime.Now; float paidFees = 0; int createdByUserID = -1;
 
                 if (clsApplicationData.GetApplicationInfoByID(applicationID, ref applicantPersonID, ref applicationDate, ref applicationTypeID, ref applicationStatus, ref lastStatusDate, ref paidFees, ref createdByUserID))
-                    return new clslocalDrivingApp(localDrivingLicenseApplicationID, licenseClassID, applicationID, applicantPersonID, applicationDate, applicationTypeID, (enApplicationStatus)applicationStatus, lastStatusDate, paidFees, createdByUserID);
+                    return new clslocalDrivingApp(localDrivingLicenseApplicationID, (clsLicenseClass.enLicenseClasses)licenseClassID, applicationID, applicantPersonID, applicationDate, applicationTypeID, (enApplicationStatus)applicationStatus, lastStatusDate, paidFees, createdByUserID);
                 else
                     return null;
             }
@@ -104,7 +104,7 @@ namespace DVLD_Business
                 byte applicationStatus = 1; DateTime lastStatusDate = DateTime.Now; float paidFees = 0; int createdByUserID = -1;
 
                 if (clsApplicationData.GetApplicationInfoByID(applicationID, ref applicantPersonID, ref applicationDate, ref applicationTypeID, ref applicationStatus, ref lastStatusDate, ref paidFees, ref createdByUserID))
-                    return new clslocalDrivingApp(localDrivingLicenseApplicationID,licenseClassID, applicationID, applicantPersonID, applicationDate, applicationTypeID, (enApplicationStatus)applicationStatus, lastStatusDate, paidFees, createdByUserID);
+                    return new clslocalDrivingApp(localDrivingLicenseApplicationID,(clsLicenseClass.enLicenseClasses)licenseClassID, applicationID, applicantPersonID, applicationDate, applicationTypeID, (enApplicationStatus)applicationStatus, lastStatusDate, paidFees, createdByUserID);
                 else
                     return null;
             }
@@ -121,7 +121,7 @@ namespace DVLD_Business
                 byte applicationStatus = 1; DateTime lastStatusDate = DateTime.Now; float paidFees = 0; int createdByUserID = -1;
 
                 if (clsApplicationData.GetApplicationInfoByID(applicationID, ref applicantPersonID, ref applicationDate, ref applicationTypeID, ref applicationStatus, ref lastStatusDate, ref paidFees, ref createdByUserID))
-                    return new clslocalDrivingApp(localDrivingLicenseApplicationID, licenseClassID, applicationID, applicantPersonID, applicationDate, applicationTypeID, (enApplicationStatus)applicationStatus, lastStatusDate, paidFees, createdByUserID);
+                    return new clslocalDrivingApp(localDrivingLicenseApplicationID, (clsLicenseClass.enLicenseClasses)licenseClassID, applicationID, applicantPersonID, applicationDate, applicationTypeID, (enApplicationStatus)applicationStatus, lastStatusDate, paidFees, createdByUserID);
                 else
                     return null;
             }
@@ -130,21 +130,21 @@ namespace DVLD_Business
         }
         protected bool _AddNewLocalDrivingApp()
         {
-            this.LocalDrivingAppID=DVLD_DataAccess.clslocalDrivingAppData.AddNewLocalDrivingAppData(this.ApplicationID,this.LicenseClassID);
+            this.LocalDrivingAppID=DVLD_DataAccess.clslocalDrivingAppData.AddNewLocalDrivingAppData(this.ApplicationID,(int)this.LicenseClassID);
             return (this.LocalDrivingAppID != -1);
         }
         protected bool _UpdateLocalDrivingApplication()
         {
             if (clsApplicationData.UpdateApplication(this.ApplicationID, this.ApplicantPersonID, this.ApplicationDate,
                 (int) this.ApplicationTypeID, (byte)this.ApplicationStatus, this.LastStatusDate, this.PaidFees, this.CreatedByUserID))
-                return clslocalDrivingAppData.UpdateLocalDrivingApp(this.LocalDrivingAppID, this.ApplicationID, this.LicenseClassID);
+                return clslocalDrivingAppData.UpdateLocalDrivingApp(this.LocalDrivingAppID, this.ApplicationID,(int) this.LicenseClassID);
             else
                 return false;
         }
         public new bool Save()
         {
             base.mode =(clsApplication.enMode) this.mode;
-            int ActiveApp = GetActiveApplicationIDForLicenseClass(this.ApplicationTypeID, this.LicenseClassID);
+            int ActiveApp = GetActiveApplicationIDForLicenseClass(this.ApplicationTypeID, (clsLicenseClass.enLicenseClasses)this.LicenseClassID);
             if (ActiveApp != -1)             //there is no active Application
                 return false;
 
@@ -175,18 +175,18 @@ namespace DVLD_Business
         {
             return clslocalDrivingAppData.GetAllLocalDrivingApplications();
         }
-        public static bool Delete(int LocalDrivingAppID)
+        public static new bool Delete(int LocalDrivingAppID)
         {
             clslocalDrivingApp localDrivingInfo=clslocalDrivingApp.Find(LocalDrivingAppID);
             if (clslocalDrivingAppData.DeleteLocalDrivingApp(LocalDrivingAppID))
-                if (clsApplication.DeleteApplication(localDrivingInfo.ApplicationID))
+                if (clsApplication.Delete(localDrivingInfo.ApplicationID))
                     return true;
             return false;
         }
         public bool Delete()
         {
             if (clslocalDrivingAppData.DeleteLocalDrivingApp(this.LocalDrivingAppID))
-                if (clsApplication.DeleteApplication(this.ApplicationID))
+                if (clsApplication.Delete(this.ApplicationID))
                     return true;
             return false;
         }
@@ -204,9 +204,9 @@ namespace DVLD_Business
                 case enTestType.VisionTest:
                     return true;
                 case enTestType.WrittenTest:
-                    return DoesPassTestType(localDrivingAppID,testTypeID);
+                    return DoesPassTestType(localDrivingAppID,enTestType.VisionTest);
                 case enTestType.StreetTest:
-                    return DoesPassTestType(localDrivingAppID, testTypeID);
+                    return DoesPassTestType(localDrivingAppID, enTestType.WrittenTest);
                 default:
                     return false;
             }
@@ -259,21 +259,15 @@ namespace DVLD_Business
         {
             return (clsTestData.GetPassedTestCount(this.LocalDrivingAppID) == 3);
         }
-        public static int CalculateAge(DateTime birthDate)
-        {
-            int age = DateTime.Today.Year - birthDate.Year;
-
-            if (birthDate.Date > DateTime.Today.AddYears(-age))
-                age--;
-
-            return age;
-        }
         public int IssueLicenseForTheFirstTime(string notes, int createdByUserID)
         {
-            if (clsLicenseClass.Find(LicenseClassID).MinimumAllowedAge > CalculateAge(ApplicantPersonInfo.DateOfBirth)) //belki driver olur 18 yas altı!!!
+            if (clsLicenseClass.Find(LicenseClassID).MinimumAllowedAge > clsUtilityBusiness.CalculateAge(ApplicantPersonInfo.DateOfBirth)) //belki driver olur 18 yas altı!!!
                 return -1;
 
-
+            if (!PassedAllTests())
+            {
+                return -1;
+            }
             clsDriver Driver = clsDriver.FindByPersonID(ApplicantPersonID);
             if (Driver == null) { 
                 Driver = new clsDriver();
@@ -281,7 +275,7 @@ namespace DVLD_Business
                 Driver.CreatedByUserID= createdByUserID;
                 if (!Driver.Save())
                     return -1;
-                Driver.PersonInfo = clsPerson.GetPersonInfoByPersonID(this.ApplicantPersonID);
+                Driver.PersonInfo = clsPerson.Find(this.ApplicantPersonID);
             }
             clsLicense license=new clsLicense();
             license.ApplicationID = this.ApplicationID;
@@ -297,7 +291,7 @@ namespace DVLD_Business
             license.CreatedByUserID= createdByUserID;
 
             if (license.Save()) {
-                base.CompleteApplication(this.ApplicationID);
+                base.CompleteApplication();
                 return license.LicenseID;
             }
             else 

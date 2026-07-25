@@ -25,13 +25,13 @@ namespace DVLD_Business
             DriverID = -1;
             PersonID = -1;
             CreatedByUserID = -1;
-            CreatedDate = DateTime.Today;
+            CreatedDate = DateTime.Now;
         }
         private clsDriver(int driverID, int personID, int createdByUserID, DateTime createdDate)
         {
             DriverID = driverID;
             PersonID = personID;
-            clsPerson.GetPersonInfoByPersonID(personID);
+            PersonInfo= clsPerson.Find(personID);
             CreatedByUserID = createdByUserID;
             CreatedDate = createdDate;
         }
@@ -88,13 +88,13 @@ namespace DVLD_Business
         {
             return DVLD_DataAccess.clsDriverData.GetAllDrivers();
         }
-        public static DataTable GetAllLicenses(int DriverID)
+        public static DataTable GetDriverLicenses(int DriverID)
         {
-            return DVLD_Business.clsLicense.GetAllLicensesByDriverID(DriverID);
+            return DVLD_Business.clsLicense.GetDriverLicenses(DriverID);
         }
         public DataTable GetAllLicenses()
         {
-            return DVLD_Business.clsLicense.GetAllLicensesByDriverID(this.DriverID);
+            return GetDriverLicenses(this.DriverID);
         }
     }
 }

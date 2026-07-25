@@ -60,16 +60,16 @@ namespace DVLD_DataAccess
         {
             bool isFound = false;
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.connectionString);
-            string query = "SELECT * FROM People WHERE PersonID = @PersonID";
+            string query = "SELECT * FROM People WHERE NationalNo = @NationalNo";
             SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@PersonID", personID);
+            command.Parameters.AddWithValue("@NationalNo", nationalID);
             try
             {
                 connection.Open();
                 SqlDataReader Reader = command.ExecuteReader();
                 if (Reader.Read())
                 {
-                    nationalID = (string)Reader["NationalNo"];
+                    personID = (int)Reader["PersonID"];
                     firstName = (string)Reader["FirstName"];
                     secondName = (string)Reader["SecondName"];
                     if (Reader["ThirdName"] != DBNull.Value)
@@ -262,11 +262,11 @@ namespace DVLD_DataAccess
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.connectionString);
 
             string query = @"SELECT People.PersonID, People.NationalNo, People.FirstName, People.SecondName, People.ThirdName, People.LastName, People.DateOfBirth, 
-                  Gender,GenderCaption=CASE WHEN Gender = 0 THEN 'Male' WHEN Gender = 1 THEN 'Female' ELSE 'Unknown' END
-				  ,People.Phone, People.Email,Countries.CountryID, Countries.CountryName
+                  GenderCaption=CASE WHEN Gender = 0 THEN 'Male' WHEN Gender = 1 THEN 'Female' ELSE 'Unknown' END
+				  ,People.Phone, People.Email, Countries.CountryName
                     FROM     People INNER JOIN
                   Countries ON People.NationalityCountryID = Countries.CountryID
-				  order by People.FirstName
+				  order by People.PersonID desc
 
 ";
 
