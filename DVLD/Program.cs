@@ -16,7 +16,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System.Diagnostics;
+using DVLD.Global_Classes;
 namespace DVLD
 {
     internal static class Program
@@ -29,7 +30,8 @@ namespace DVLD
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
+            if (!EventLog.SourceExists(clsGlobal.AppName))
+                EventLog.CreateEventSource(clsGlobal.AppName, "Application");  
             Application.Run(new frmLogIn());
         }
     }

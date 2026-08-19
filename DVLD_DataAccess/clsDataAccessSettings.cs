@@ -9,6 +9,6 @@ namespace DVLD_DataAccess
     public class clsDataAccessSettings
     {
         public static string connectionString = "Server=.;Database=DVLD;User Id=sa;Password=123456";
-
+        public static string AppName = "DVLD";
     }
 }

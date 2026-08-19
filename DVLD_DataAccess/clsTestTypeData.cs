@@ -5,7 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Diagnostics;
 namespace DVLD_DataAccess
 {
     public class clsTestTypeData
@@ -34,7 +34,7 @@ namespace DVLD_DataAccess
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                EventLog.WriteEntry(clsDataAccessSettings.AppName, ex.Message, EventLogEntryType.Error);
             }
             finally
             {
@@ -62,7 +62,7 @@ namespace DVLD_DataAccess
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                EventLog.WriteEntry(clsDataAccessSettings.AppName, ex.Message, EventLogEntryType.Error);
             }
             finally
             {
@@ -96,7 +96,7 @@ namespace DVLD_DataAccess
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                EventLog.WriteEntry(clsDataAccessSettings.AppName, ex.Message, EventLogEntryType.Error);
                 return false;
             }
             finally

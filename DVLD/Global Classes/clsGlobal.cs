@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -17,6 +18,7 @@ namespace DVLD.Global_Classes
         static string keyPath = @"HKEY_CURRENT_USER\SOFTWARE\DVLD";
         static string Username_ValueName = "username";
         static string Password_ValueName = "password";
+        public static string AppName = "DVLD";
 
         public static bool RememberUsernameAndPassword(string Username, string Password)
         {
@@ -28,7 +30,8 @@ namespace DVLD.Global_Classes
                 Registry.SetValue(keyPath, Password_ValueName, Password_ValueData, RegistryValueKind.String);
                 return true;
             }
-            catch (Exception ex)
+
+            catch (Exception ex) 
             {
                 Console.WriteLine($"An error occurred: {ex.Message}");
                 return false;
@@ -45,7 +48,7 @@ namespace DVLD.Global_Classes
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred: {ex.Message}");
+                EventLog.WriteEntry(clsGlobal.AppName, ex.Message, EventLogEntryType.Error);
                 return false;
             }
 
